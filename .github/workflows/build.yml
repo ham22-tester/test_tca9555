@@ -1,1 +1,37 @@
+name: Build TCA9555 Test
 
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install west
+        run: |
+          pip install west
+
+      - name: Init west
+        run: |
+          west init -l app
+          west update
+
+      - name: Install Zephyr requirements
+        run: |
+          pip install -r zephyr/scripts/requirements.txt
+
+      - name: Build
+        run: |
+          west build -b nice_nano_v2 app
